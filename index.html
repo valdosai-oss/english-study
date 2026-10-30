@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Daily English | 나의 영어 독해 노트</title>
+    <title>Daily English | 단어와 독해 노트</title>
     <style>
       :root {
         --bg: #f3f6fb;
@@ -376,16 +376,47 @@
           transition: background 0.15s;
         }
       }
+
+      [hidden] { display: none !important; }
+      .main-menu { display: flex; gap: 10px; margin: 0 0 26px; }
+      .main-menu a { flex: 1; text-align: center; padding: 13px 20px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink); background: white; font-weight: 750; }
+      .main-menu a[aria-current="page"] { background: var(--accent); color: white; border-color: var(--accent); }
+      a:focus-visible { outline: 3px solid #8cadff; outline-offset: 3px; }
+      .word-link { display: block; text-decoration: none; color: inherit; border-top: 4px solid var(--accent); transition: box-shadow .15s; }
+      .word-link:hover { box-shadow: 0 6px 24px #233a5720; }
+      .word-title { font: clamp(36px, 6vw, 52px)/1.3 Georgia, serif; margin: 12px 0; color: var(--ink); }
+      .word-meta { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0; }
+      .word-meta span { border-radius: 20px; padding: 4px 12px; background: #e8efff; color: #214d9b; font-size: 12px; }
+      #word-panel { max-width: 800px; margin: auto; }
+      #word-panel h2 { margin: 0 0 8px; }
+
     </style>
   </head>
   <body>
     <header>
       <small>MY ENGLISH JOURNAL</small>
-      <h1>하루씩 쌓이는<br />영어 독해 노트</h1>
-      <p>해석부터 어휘·문장 구조·문법까지, 천천히 꾸준히.</p>
+      <h1>하루씩 쌓이는<br />영어 공부 노트</h1>
+      <p>어원으로 익히는 단어, 문장으로 쌓는 독해. 천천히 꾸준히.</p>
     </header>
     <main>
-      <div class="layout">
+      <nav class="main-menu" aria-label="주 메뉴">
+        <a href="#words" id="words-menu">단어</a>
+        <a href="#reading" id="reading-menu">독해</a>
+      </nav>
+      <section id="word-panel" aria-labelledby="words-heading" hidden>
+        <div class="eyebrow">VOCABULARY NOTE</div>
+        <h2 id="words-heading">어원으로 익히는 단어</h2>
+        <p class="meta">단어의 뿌리부터 문장 속 쓰임까지 연결해 보세요.</p>
+        <a class="card word-link" href="./perspective.html">
+          <div class="eyebrow">WORD 01 · 어원 학습</div>
+          <h3 class="word-title" lang="en">perspective</h3>
+          <p><strong>관점, 시각 · 원근법</strong></p>
+          <p class="note">per- + spect · ‘꿰뚫어 보다’에서 ‘바라보는 방식’으로.</p>
+          <div class="word-meta"><span>관련 단어 6개</span><span>예문 구조 분석</span><span>즉시 해설 퀴즈 4개</span></div>
+          <span class="action">학습 시작하기 →</span>
+        </a>
+      </section>
+      <div class="layout" id="reading-panel" hidden>
         <nav class="sidebar" aria-label="날짜별 학습 목차">
           <h2>STUDY DAYS</h2>
           <button class="daybtn" data-day="1">Day 01 <small>3문장</small></button
@@ -799,7 +830,14 @@
           /[&<>"']/g,
           (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c],
         );
+      function showMenu(menu) {
+        document.getElementById("word-panel").hidden = menu !== "words";
+        document.getElementById("reading-panel").hidden = menu !== "reading";
+        document.getElementById("words-menu").setAttribute("aria-current", menu === "words" ? "page" : "false");
+        document.getElementById("reading-menu").setAttribute("aria-current", menu === "reading" ? "page" : "false");
+      }
       function render(day) {
+        showMenu("reading");
         const d = DATA.find((x) => x.day === day);
         if (!d) return;
         document.querySelectorAll(".daybtn").forEach((b) => {
@@ -864,6 +902,10 @@
         .querySelectorAll(".daybtn")
         .forEach((b) => b.addEventListener("click", () => render(+b.dataset.day)));
       function renderFromHash() {
+        if (!location.hash || location.hash === "#words") {
+          showMenu("words");
+          return;
+        }
         const initial = Number((location.hash.match(/^#day-0?(\d+)$/) || [])[1] || 1);
         render(DATA.some((x) => x.day === initial) ? initial : 1);
       }
@@ -872,3 +914,4 @@
     </script>
   </body>
 </html>
+
